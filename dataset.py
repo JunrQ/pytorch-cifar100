@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy
 import torch
 from torch.utils.data import Dataset
+from PIL import Image
 
 class CIFAR100Train(Dataset):
     """cifar100 test dataset, derived from
@@ -61,3 +62,49 @@ class CIFAR100Test(Dataset):
             image = self.transform(image)
         return label, image
 
+class TinyImageNet(Dataset):
+  def __init__(self, train_or_test='train', dir=None, preload=True, transform=None):
+    metatrain_folder = '%s/train' % dir
+    metatest_folder = '%s/val' % dir
+    self.num_classes = 200
+    self.train_or_test = train_or_test
+    self.preload = preload
+
+    self.labels = os.listdir(metatrain_folder)
+    assert len(self.labels) == self.num_classes
+    self.labels_map = dict(zip(self.labels, range(len(self.labels))))
+
+    if train_or_test == 'train':
+      folders = [os.path.join(metatrain_folder, label) \
+                  for label in os.listdir(metatrain_folder) \
+                    if os.path.isdir(os.path.join(metatrain_folder, label))]
+      images = []
+      for folder in folders:
+        for img_name in os.listdir(folders):
+          images.append([os.path.join(folders, img_name), self.labels_map[os.path.basename(folders)]])
+    elif train_or_test == 'test':
+      anno_file = os.path.join(metatest_folder, 'val_annotations.txt')
+      images = []
+      with open(anno_file, 'r') as f:
+        for l in f.readlines():
+          img_name, label = l.strip().split()[:2]
+          images.append([os.path.join(metatest_folder, 'images', img_name), self.labels_map[label]])
+    else:
+      assert False
+    
+    self.data = self.get_images(images)
+    self.transform = transform
+
+  def get_images(self, images):
+    for i, (img_path, _) in enumerate(images):
+      images[i][0] = Image.fromarray(cv2.cvtColor(cv2.imread(img_path), cv2.BGR2RGB))
+    return images
+
+  def __len__(self):
+    return len(self.data)
+
+  def __getitem__(self, index):
+    img = self.data[index][0]
+    if self.transform is not None:
+      img = self.transform(img)
+    return self.data[index][1], img
