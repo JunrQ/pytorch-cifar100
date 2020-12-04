@@ -5,6 +5,7 @@ author baiyu
 import os
 import sys
 import pickle
+import cv2
 
 from skimage import io
 import matplotlib.pyplot as plt
@@ -80,8 +81,11 @@ class TinyImageNet(Dataset):
                     if os.path.isdir(os.path.join(metatrain_folder, label))]
       images = []
       for folder in folders:
-        for img_name in os.listdir(folders):
-          images.append([os.path.join(folders, img_name), self.labels_map[os.path.basename(folders)]])
+        for img_name in os.listdir(os.path.join(folder, 'images')):
+          _l = self.labels_map[os.path.basename(folder)]
+          images.append([os.path.join(folder, 'images', img_name), _l])
+          # images.append([os.path.join(folder, img_name), self.labels_map[os.path.basename(folder)]])
+      assert len(images) == 200 * 500
     elif train_or_test == 'test':
       anno_file = os.path.join(metatest_folder, 'val_annotations.txt')
       images = []
@@ -89,15 +93,15 @@ class TinyImageNet(Dataset):
         for l in f.readlines():
           img_name, label = l.strip().split()[:2]
           images.append([os.path.join(metatest_folder, 'images', img_name), self.labels_map[label]])
+      assert len(images) == 200 * 50
     else:
       assert False
-    
     self.data = self.get_images(images)
     self.transform = transform
 
   def get_images(self, images):
     for i, (img_path, _) in enumerate(images):
-      images[i][0] = Image.fromarray(cv2.cvtColor(cv2.imread(img_path), cv2.BGR2RGB))
+      images[i][0] = Image.fromarray(cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB))
     return images
 
   def __len__(self):
@@ -107,4 +111,5 @@ class TinyImageNet(Dataset):
     img = self.data[index][0]
     if self.transform is not None:
       img = self.transform(img)
-    return self.data[index][1], img
+    return img, self.data[index][1]
+
