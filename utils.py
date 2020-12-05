@@ -142,7 +142,9 @@ def get_network(args):
     elif args.net == 'wideresnet':
         from models.wideresidual import wideresnet
         net = wideresnet()
-
+    elif args.net == 'efficientnet':
+        from models.efficientnet import efficient_net
+        net = efficient_net()
     else:
         print('the network name you have entered is not supported yet')
         sys.exit()
