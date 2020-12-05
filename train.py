@@ -92,9 +92,9 @@ def eval_training(epoch=0, tb=True):
         correct += preds.eq(labels).sum()
 
     finish = time.time()
-    if args.gpu:
-        print('GPU INFO.....')
-        print(torch.cuda.memory_summary(), end='')
+    # if args.gpu:
+    #     print('GPU INFO.....')
+    #     # print(torch.cuda.memory_summary(), end='')
     print('Evaluating Network.....')
     print('Test set: Average loss: {:.4f}, Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
         test_loss / len(cifar100_test_loader.dataset),
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     cifar100_training_loader = get_training_dataloader(
         settings.CIFAR100_TRAIN_MEAN,
         settings.CIFAR100_TRAIN_STD,
-        num_workers=4,
+        num_workers=0,
         batch_size=args.b,
         shuffle=True
     )
@@ -135,9 +135,9 @@ if __name__ == '__main__':
     cifar100_test_loader = get_test_dataloader(
         settings.CIFAR100_TRAIN_MEAN,
         settings.CIFAR100_TRAIN_STD,
-        num_workers=4,
+        num_workers=0,
         batch_size=args.b,
-        shuffle=True
+        shuffle=False
     )
 
     loss_function = nn.CrossEntropyLoss()
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     #so the only way is to create a new tensorboard log
     writer = SummaryWriter(log_dir=os.path.join(
             settings.LOG_DIR, args.net, settings.TIME_NOW))
-    input_tensor = torch.Tensor(1, 3, 32, 32).cuda()
+    input_tensor = torch.Tensor(1, 3, 64, 64).cuda()
     writer.add_graph(net, input_tensor)
 
     #create checkpoint folder to save model

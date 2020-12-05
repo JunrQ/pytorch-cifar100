@@ -177,7 +177,7 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=Tru
     ])
     # cifar100_training = CIFAR100Train(path, transform=transform_train)
     # cifar100_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
-    ds = TinyImageNet(dir='./data/tiny-imagenet-20', train_or_test='train', transform=transform_train)
+    ds = TinyImageNet(dir='./data/tiny-imagenet-200', train_or_test='train', transform=transform_train)
     cifar100_training_loader = DataLoader(
         ds, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
@@ -199,7 +199,7 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    ds = TinyImageNet(dir='./data/tiny-imagenet-20', train_or_test='test', transform=transform_test)
+    ds = TinyImageNet(dir='./data/tiny-imagenet-200', train_or_test='test', transform=transform_test)
     cifar100_test_loader = DataLoader(
         ds, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
