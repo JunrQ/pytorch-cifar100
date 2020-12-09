@@ -109,13 +109,13 @@ class BottleneckResidualSEBlock(nn.Module):
 
 class SEResNet(nn.Module):
 
-    def __init__(self, block, block_num, class_num=100):
+    def __init__(self, block, block_num, class_num=200):
         super().__init__()
 
         self.in_channels = 64
 
         self.pre = nn.Sequential(
-            nn.Conv2d(3, 64, 3, padding=1),
+            nn.Conv2d(3, 64, 5, stride=2, padding=2),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True)
         )
