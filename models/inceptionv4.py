@@ -34,7 +34,7 @@ class Inception_Stem(nn.Module):
     def __init__(self, input_channels):
         super().__init__()
         self.conv1 = nn.Sequential(
-            BasicConv2d(input_channels, 32, kernel_size=3),
+            BasicConv2d(input_channels, 32, kernel_size=5, stride=2, padding=2),
             BasicConv2d(32, 32, kernel_size=3, padding=1),
             BasicConv2d(32, 64, kernel_size=3, padding=1)
         )
@@ -503,7 +503,7 @@ class InceptionResNetReductionB(nn.Module):
 
 class InceptionResNetV2(nn.Module):
 
-    def __init__(self, A, B, C, k=256, l=256, m=384, n=384, class_nums=100):
+    def __init__(self, A, B, C, k=256, l=256, m=384, n=384, class_nums=200):
         super().__init__()
         self.stem = Inception_Stem(3)
         self.inception_resnet_a = self._generate_inception_module(384, 384, A, InceptionResNetA)
